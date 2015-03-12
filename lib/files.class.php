@@ -66,8 +66,8 @@
 			  $this->lastError = 'Failed to prepare query: ('.$this->connection->errno.') '.$this->connection->error;
 			  return false;
 		  } else {
-			  // Bind parameters to prepared query (three strings)
-			  $stmt->bind_param('sddss', $userid, $lat, $long, $_FILES['file']['tmp_name'], $location);
+			  // Bind parameters to prepared query
+			  $stmt->bind_param('sddss', $userid, $lat, $long, $_FILES['file']['name'], $location);
 			  // Execute the query to add the row
 			  if ($stmt->execute()) {
 				  // Successful upload
@@ -82,7 +82,7 @@
 		// Get a file from the database by ID and return the data
 		// Returns an associative array with all the fields or false if file wasn't found
 		public function getFile($id) {
-			if (!($stmt = $this->connection->prepare("SELECT location FROM Files WHERE ID = ? LIMIT 1"))) {
+			if (!($stmt = $this->connection->prepare("SELECT Location FROM Files WHERE ID = ? LIMIT 1"))) {
 				$this->lastError = 'Failed to prepare query: ('.$this->connection->errno.') '.$this->connection->error;
 				return false;
 			} else {
@@ -93,17 +93,55 @@
 				$stmt->execute();
 				$stmt->store_result();
 
-				// If the username exists
+				// If the file exists
 				if ($stmt->num_rows > 0) {
-					// Fetch the value of the fields for this file
-					$stmt->bind_result($results);
-					$stmt->fetch();
-					return $results;
-				} else {
-					// ID doesn't exist
-					$this->lastError = 'The given file ID does not exist';
-					return false;
-				}
+				    // Bind the results to variables
+				    $stmt->bind_result($id, $latitude, $longitude, $name, $radius);
+				    // Fetch the row
+				    while ($stmt->fetch()) {
+				      // Create an associative array for the results
+					    $results = array(
+					        'ID' => $id,
+					        'Latitude' => $latitude,
+					        'Longitude' => $longitude,
+					        'Name' => $name,
+					        'Radius' => $radius,
+					    );
+					  }
+					  // Return the array
+					  return $results;
+				}     
+			}
+		}
+		
+		// Gets all the files
+		// Returns an associative array or false if error
+		public function getAllFiles() {
+			if (!($stmt = $this->connection->prepare("SELECT ID, Latitude, Longitude, Name, Location, Radius FROM Files"))) {
+				$this->lastError = 'Failed to prepare query: ('.$this->connection->errno.') '.$this->connection->error;
+				return false;
+			} else {
+				// Execute the query and store the result set
+				$stmt->execute();
+				$stmt->store_result();
+
+		    // Bind the results to variables
+		    $stmt->bind_result($id, $latitude, $longitude, $name, $location, $radius);
+		    $results = array();
+		    // Keep fetching rows
+		    while ($stmt->fetch()) {
+		      // Add to array
+			    $results[] = array(
+			        'ID' => $id,
+			        'Latitude' => $latitude,
+			        'Longitude' => $longitude,
+			        'Name' => $name,
+			        'Location' => $location,
+			        'Radius' => $radius,
+			    );
+			  }
+			  // Return the results array
+			  return $results;
 			}
 		}
 		
@@ -121,7 +159,7 @@
 				$stmt->execute();
 				$stmt->store_result();
 
-				// If the username exists
+				// If the user has files
 				if ($stmt->num_rows > 0) {
 				    // Bind the results to variables
 				    $stmt->bind_result($id, $latitude, $longitude, $name, $radius);
@@ -140,8 +178,8 @@
 					// Return the results array
 					return $results;
 				} else {
-					// ID doesn't exist
-					$this->lastError = 'The given user ID does not exist';
+					// No files created yet
+					$this->lastError = 'You have no files yet. Start uploading at the map!';
 					return false;
 				}
 			}
@@ -174,7 +212,7 @@
 					  return false;
 				  } else {
 					  // Bind parameters to prepared query (three strings)
-					  $stmt->bind_param('ii', $userID, $fileID);
+					  $stmt->bind_param('ii', $fileID, $userID);
 					  // Execute the query to add the row
 					  if ($stmt->execute()) {
 						  // Successful delete

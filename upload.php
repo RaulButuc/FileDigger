@@ -22,7 +22,7 @@
     
     // Along with POST details from form:
     // POSITION VARS
-    if (isset($_POST['latitude']) && isset($_POST['latitude'])) {
+    if (isset($_POST['latitude']) && isset($_POST['longitude'])) {
       $userid = $_SESSION['userID'];
       $lat = $_POST['latitude'];
       $lng = $_POST['longitude'];
@@ -34,7 +34,7 @@
         echo $result;
       }
     } else {
-      echo 'Required lat/long not given';
+      echo 'Required latitude/longitude not given!';
     }
   }
 

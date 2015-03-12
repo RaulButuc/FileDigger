@@ -120,9 +120,6 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="js/lib/bootstrap.min.js"></script>
     <script src="holder.js"></script>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
-    <script type="text/javascript" src="js/main_map.js"></script>
-    <script type="text/javascript" src="js/map_settings.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="js/lib/ie10-viewport-bug-workaround.js"></script>
   </body>

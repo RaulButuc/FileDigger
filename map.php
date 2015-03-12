@@ -4,6 +4,7 @@
   include_once('config.inc.php');
   include_once('lib/database.class.php');
   include_once('lib/login.class.php');
+  include_once('lib/files.class.php');
 
   // Create instances of database and login classes
   // This checks for login/logout/register requests on this page
@@ -75,6 +76,9 @@
 
     </div><!-- /.container -->
 
+   <!-- Getting all the files
+    ================================================== -->
+    
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -83,8 +87,8 @@
     <script src="js/lib/bootstrap.min.js"></script>
     <script src="holder.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.19"></script>
-    <script type="text/javascript" src="js/main_map.js"></script>
     <script type="text/javascript" src="js/map_settings.js"></script>
+    <script type="text/javascript" src="js/main_map.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="js/lib/ie10-viewport-bug-workaround.js"></script>
   </body>

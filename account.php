@@ -49,11 +49,13 @@
     ================================================== -->
     <?php include 'views/header.php'; ?>
 
-   
-
     <div class="container">
         
           <h1 class="page-header">Your Files</h1>
+          
+          <div <?php if (!isset($_GET['err'])) { echo 'style="display:none"'; } ?> class="alert alert-danger"><?php echo htmlspecialchars($_GET['err']); ?></div>
+          <div <?php if (!isset($_GET['success'])) { echo 'style="display:none"'; } ?> class="alert alert-success">The file with ID <?php echo htmlspecialchars($_GET['success']); ?> has been deleted</div>
+          
           <div class="table-responsive">
             <table class="table table-striped">
               <thead>
@@ -73,20 +75,24 @@
                 $files = new Files($db);
                 
                 // Get all the files from the current user
-                $userFiles = $files->getFilesByUser($_SESSION['userID']);
+                if ($userFiles = $files->getFilesByUser($_SESSION['userID'])) {
                 
-                // Loop through the user's files and add them to the table
-                foreach($userFiles as $currentFile) {
-                    // Set radius to string 'None' if it is 0
-                    $currentRadius = ($currentFile['Radius'] == 0 ? 'None' : $currentFile['Radius']);
-                    echo '<tr>';
-                    echo '<td>' . $currentFile['ID'] . '</td>';
-                    echo '<td>' . $currentFile['Name'] . '</td>';
-                    echo '<td>' . $currentFile['Latitude'] . '</td>';
-                    echo '<td>' . $currentFile['Longitude'] . '</td>';
-                    echo '<td>' . $currentRadius  . '</td>';
-                    echo '<td><a href="remove.php?fileID=' . $currentFile['ID'] . '" class="btn btn-danger" role="button">Remove</a></td>'; 
-                    echo '</tr>';
+                  // Loop through the user's files and add them to the table
+                  foreach($userFiles as $currentFile) {
+                      // Set radius to string 'None' if it is 0
+                      $currentRadius = ($currentFile['Radius'] == 0 ? 'None' : $currentFile['Radius']);
+                      echo '<tr>';
+                      echo '<td>' . $currentFile['ID'] . '</td>';
+                      echo '<td>' . $currentFile['Name'] . '</td>';
+                      echo '<td>' . $currentFile['Latitude'] . '</td>';
+                      echo '<td>' . $currentFile['Longitude'] . '</td>';
+                      echo '<td>' . $currentRadius  . '</td>';
+                      echo '<td><a href="remove.php?fileID=' . $currentFile['ID'] . '" class="btn btn-danger" role="button">Remove</a></td>'; 
+                      echo '</tr>';
+                  }
+                  
+                } else {
+                  echo '<tr><td colspan="6">You have not uploaded any files yet! <a href="map.php">Get started at the map</a></td></tr>';
                 }
                 ?>
               </tbody>
@@ -105,9 +111,6 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="js/lib/bootstrap.min.js"></script>
     <script src="holder.js"></script>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.19"></script>
-    <script type="text/javascript" src="js/main_map.js"></script>
-    <script type="text/javascript" src="js/map_settings.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="js/lib/ie10-viewport-bug-workaround.js"></script>
   </body>

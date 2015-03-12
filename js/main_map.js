@@ -19,8 +19,8 @@ var navGeolocation = navigator.geolocation;
 // A marker on the map representing a file stored.
 var fileMarker = new google.maps.Marker();
 
-// An upload box.
-var uploadBox = new google.maps.InfoWindow();
+// An info window box.
+var infoWindowBox = new google.maps.InfoWindow();
 
 // Options for radius circles.
 var radiusOptions = {
@@ -52,62 +52,13 @@ function initialize() {
       fileDiggerMap.setCenter(userLocation);
 
       google.maps.event.addListener(fileDiggerMap, 'click', function(event) {
-        placeMarkerOnFileDiggerMap(fileDiggerMap, event.latLng);
+        placeMarkerForUpload(fileDiggerMap, event.latLng);
       });
     });
   }
   else {
     handleGeolocationUnavailable(false, fileDiggerMap);
   }
-}
-
-// Create a marker on the map.
-function placeMarkerOnFileDiggerMap(map, location) {
-  uploadBoxHTML = 
-    '<!DOCTYPE html>' +
-    '<html lang="en">' +
-    '<head>' +
-      '<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css/sun" />' +
-      // Doesn't work
-      //'<link rel="stylesheet" href="range.css" type="text/css"/>' +
-      '<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>' +
-      '<script type="text/javascript" src="main_map.js"></script>' +
-      cssstyle +
-    '</head>' +
-    '<body>' +
-      '<div>' +
-        '<form id="uploadFile" method="post" action="upload.php" name="upload" enctype="multipart/form-data" oninput="amount.value=rangeInput.value">' +
-         '<input type="file" name="file" accept="*" value="Choose file">' + '<br/>' +
-         '<input type="hidden" name="latitude" value="' + location.lat() + '">' +
-         '<input type="hidden" name="longitude" value="' + location.lng() + '">' +
-         '<input type="range" id="rangeInput" name="rangeInput" min="25" max="350">' + '<br/>' +
-         '<div id="text-left"> Radius Value: </div>' +
-         '<output id="radius-slider" name="amount" for="rangeInput">185</output>' +
-         '<div id="text-right">  meters</div>' + '<br/>' +
-         '<input id="submit-button" class="btn btn-default" type="submit" name="submit" value="Submit">' +
-        '</form>' +
-      '</div>' +
-    '</body>' +
-    '</html>';
-
-  var radiusSize = 185;
-
-  fileMarker.setMap(map);
-  fileMarker.setPosition(location);
-
-  uploadBox.setContent(uploadBoxHTML);
-  uploadBox.open(map, fileMarker);
-
-  fileRadius.setOptions(radiusOptions);
-  fileRadius.setCenter(location);
-  fileRadius.setRadius(parseFloat(radiusSize));
-
-  google.maps.event.addListener(uploadBox, 'closeclick', function() {
-    uploadBox.close();
-    fileMarker.setMap(null);
-    fileRadius.setMap(null);
-  });
-
 }
 
 $(document).ready(function() {
@@ -170,8 +121,16 @@ $(document).ready(function() {
     $("#htmlParsingPlaceholder").append($(htmlCode));
     alert($("#htmlParsingPlaceholder").find("#radius-slider").text());
   });*/
+
+  $.getJSON('mapData.php', function(data) {
+    $.each(data, function(key, value) {
+      processJSONData(key, value.ID, value.Latitude, value.Longitude, value.Name, value.Location, value.Radius, fileDiggerMap);
+    });
+  });
 });
 
+// Variable holding the CSS file. Apparently loading dynamically doesn't work,
+// so it has to be hardcoded into a string for the InfoWindow to work.
 var cssstyle = "<style type='text/css'>" +
   "input[type=range] {" +
    " /*removes default webkit styles*/" +
