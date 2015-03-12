@@ -127,7 +127,6 @@
 					$this->errorRedirect('Incorrect Username or Password', 'login');
 				}
 			}
-
 		}
 
 	  // Register a new user

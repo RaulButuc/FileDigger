@@ -87,7 +87,7 @@
                       echo '<td>' . $currentFile['Latitude'] . '</td>';
                       echo '<td>' . $currentFile['Longitude'] . '</td>';
                       echo '<td>' . $currentRadius  . '</td>';
-                      echo '<td><a href="remove.php?fileID=' . $currentFile['ID'] . '" class="btn btn-danger" role="button">Remove</a></td>'; 
+                      echo '<td><a href="download.php?fileID=' . $currentFile['ID'] . '" class="btn btn-success" role="button">Download</a><a href="remove.php?fileID=' . $currentFile['ID'] . '" class="btn btn-danger" role="button">Remove</a></td>'; 
                       echo '</tr>';
                   }
                   
