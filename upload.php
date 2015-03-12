@@ -1,7 +1,6 @@
 <?php
 
   // Include config and library classes
-  include_once('config.inc.php');
   include_once('lib/database.class.php');
   include_once('lib/login.class.php');
   include_once('lib/files.class.php');
@@ -27,14 +26,15 @@
       $lat = $_POST['latitude'];
       $lng = $_POST['longitude'];
     
-      // To add the file to the DB and move to storage
+      // To add thea file to the DB and move to storage
       if ($result = $files->uploadFile($userid, $lat, $lng) == false) {
-        echo $files->getError();
+        header('Location: account.php?err='.urlencode($files->getError()));
       } else {
-        echo $result;
+        // Redirect to the files list if this succeeded
+        header('Location: account.php');
       }
     } else {
-      echo 'Required latitude/longitude not given!';
+      header('Location: account.php?err='.urlencode('Required latitude/longitude not given!'));
     }
   }
 
