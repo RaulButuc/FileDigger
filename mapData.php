@@ -11,7 +11,8 @@
     header('Location: login.php');
   } else {
     $files = new Files($db);
-    $jsonEncoding = json_encode($files->getAllFiles());
-    echo $jsonEncoding;
+    if ($fileInfo = $files->getAllFiles()) {
+      echo json_encode($fileInfo);
+    }
   }
 ?>
