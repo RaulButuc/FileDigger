@@ -124,7 +124,7 @@ $(document).ready(function() {
 
   $.getJSON('mapData.php', function(data) {
     $.each(data, function(key, value) {
-      processJSONData(key, value.ID, value.Latitude, value.Longitude, value.Name, value.Location, value.Radius, fileDiggerMap);
+      placeMarkerForDownload(value.ID, value.Latitude, value.Longitude, value.Name, value.Radius, fileDiggerMap);
     });
   });
 });

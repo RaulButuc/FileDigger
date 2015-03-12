@@ -5,8 +5,8 @@
 class Database {
 
   // Database connection config
-  const DB_HOST = 'dbhost.cs.man.ac.uk';
-  const DB_USERNAME = 'mbax4mr3';
+  const DB_HOST = 'localhost';
+  const DB_USERNAME = 'root';
   const DB_PASSWORD = 'y11groupproject';
   const DB_NAME = '2014_comp10120_y11';
 

@@ -86,7 +86,7 @@ function placeMarkerForUpload(map, location) {
 
 }
 
-function placeMarkerForDownload(lat, lng, name, file_location, radius, map) {
+function placeMarkerForDownload(fileID, lat, lng, name, radius, map) {
   var markerLocation = new google.maps.LatLng(lat, lng);
   var existingMarker = new google.maps.Marker({
     map: map,
@@ -110,7 +110,7 @@ function placeMarkerForDownload(lat, lng, name, file_location, radius, map) {
          '<h2>'; 
   var downloadBoxHTMLPart2 = 
           '</h2>' +
-          '<input type="hidden" name="file_location" value="' + file_location + '">' + '<br/>' +
+          '<input type="hidden" name="fileID" value="' + fileID + '">' + '<br/>' +
           '<input id="submit-button" class="btn btn-default" type="submit" name="submit" value="Download">' +
         '</form>' +
       '</div>' +
@@ -130,8 +130,4 @@ function placeMarkerForDownload(lat, lng, name, file_location, radius, map) {
     infoWindowBox.close();
     fileRadius.setMap(null);
   });
-}
-
-function processJSONData(key, id, lat, lng, name, file_location, radius, map) {
-  placeMarkerForDownload(lat, lng, name, file_location, radius, map);
 }

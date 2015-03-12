@@ -37,9 +37,9 @@
 				'mp3' => 'audio/mpeg3',
 				'mp3' => 'audio/x-mpeg-3',
 				'jpg' => 'image/jpeg',
-        'png' => 'image/png',
-        'gif' => 'image/gif',
-        'bmp' => 'image/bmp'
+        		'png' => 'image/png',
+        		'gif' => 'image/gif',
+        		'bmp' => 'image/bmp'
 			);
 			if(!$extension = array_search($uploadedFileInfo, $allowedTypes)) {
 				$this->lastError = 'You cannot upload this filetype to the map';
@@ -47,18 +47,17 @@
 			}
 
 			// If file size is too large give error
-			if ($_FILES['file']['size'] > 1000000) {
+			if ($_FILES['file']['size'] > 10000000) {
 				$this->lastError = 'Exceeded filesize limit of 10MB';
 				return false;
 			}
 
 			// File name needs to be replaced with a name given from binary data
 			// and the extension which is explicitly defined and allowed from above
-			$location = '/uploads/'.md5_file($_FILES['file']['tmp_name']).'.'.$extension;
-			if (!move_uploaded_file($_FILES['file']['tmp_name'], __DIR__ . $location)) {
+			$location = '/var/www/html/uploads/'.md5_file($_FILES['file']['tmp_name']).'.'.$extension;
+			if (!move_uploaded_file($_FILES['file']['tmp_name'], $location)) {
 				$this->lastError = 'Failed to move uploaded file to storage';
-				// DUE TO FILE PERMISSIONS WE CANNOT UPLOAD FILES TO THE WEBSERVER YET
-				//return false;
+				return false;
 			}
 
 			// Add to the database afterwards
@@ -70,8 +69,8 @@
 			  $stmt->bind_param('sddss', $userid, $lat, $long, $_FILES['file']['name'], $location);
 			  // Execute the query to add the row
 			  if ($stmt->execute()) {
-				  // Successful upload
-				  return true;
+				  // Successful upload, return the completed file data
+				  return $this->getFile($this->connection->insert_id);
 			  } else {
 				  $this->lastError = 'Failed to upload: ('.$this->connection->errno.') '.$this->connection->error;
 				  return false;
@@ -82,7 +81,7 @@
 		// Get a file from the database by ID and return the data
 		// Returns an associative array with all the fields or false if file wasn't found
 		public function getFile($id) {
-			if (!($stmt = $this->connection->prepare("SELECT Location FROM Files WHERE ID = ? LIMIT 1"))) {
+			if (!($stmt = $this->connection->prepare("SELECT ID, Latitude, Longitude, Name, Location, Radius FROM Files WHERE ID = ? LIMIT 1"))) {
 				$this->lastError = 'Failed to prepare query: ('.$this->connection->errno.') '.$this->connection->error;
 				return false;
 			} else {
@@ -96,7 +95,7 @@
 				// If the file exists
 				if ($stmt->num_rows > 0) {
 				    // Bind the results to variables
-				    $stmt->bind_result($id, $latitude, $longitude, $name, $radius);
+				    $stmt->bind_result($id, $latitude, $longitude, $name, $location, $radius);
 				    // Fetch the row
 				    while ($stmt->fetch()) {
 				      // Create an associative array for the results
@@ -105,19 +104,22 @@
 					        'Latitude' => $latitude,
 					        'Longitude' => $longitude,
 					        'Name' => $name,
-					        'Radius' => $radius,
+					        'Location' => $location,
+					        'Radius' => $radius
 					    );
 					  }
 					  // Return the array
 					  return $results;
-				}     
+				} else {
+					return false;
+				}  
 			}
 		}
 		
 		// Gets all the files
 		// Returns an associative array or false if error
 		public function getAllFiles() {
-			if (!($stmt = $this->connection->prepare("SELECT ID, Latitude, Longitude, Name, Location, Radius FROM Files"))) {
+			if (!($stmt = $this->connection->prepare("SELECT ID, Latitude, Longitude, Name, Location, Radius FROM Files ORDER BY ID DESC"))) {
 				$this->lastError = 'Failed to prepare query: ('.$this->connection->errno.') '.$this->connection->error;
 				return false;
 			} else {
@@ -137,7 +139,7 @@
 			        'Longitude' => $longitude,
 			        'Name' => $name,
 			        'Location' => $location,
-			        'Radius' => $radius,
+			        'Radius' => $radius
 			    );
 			  }
 			  // Return the results array
