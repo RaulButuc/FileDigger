@@ -56,15 +56,21 @@
           <div <?php if (!isset($_GET['err'])) { echo 'style="display:none"'; } ?> class="alert alert-danger"><?php echo htmlspecialchars($_GET['err']); ?></div>
           <div <?php if (!isset($_GET['success'])) { echo 'style="display:none"'; } ?> class="alert alert-success">The file with ID <?php echo htmlspecialchars($_GET['success']); ?> has been deleted</div>
           
+          <div class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+            <input id="search" class="username form-control" type="text"  name="Search" value="" placeholder="Search for your files">
+          </div>
           <div class="table-responsive">
             <table class="table table-striped">
               <thead>
-                <tr>
+                <tr id="tableHeader">
                   <th>ID</th>
                   <th>Filename</th>
                   <th>Latitude</th>
                   <th>Longitude</th>
                   <th>Radius</th>
+                  <th></th>
+                  <th></th>
                   <th></th>
                 </tr>
               </thead>
@@ -87,7 +93,9 @@
                       echo '<td>' . $currentFile['Latitude'] . '</td>';
                       echo '<td>' . $currentFile['Longitude'] . '</td>';
                       echo '<td>' . $currentRadius  . '</td>';
-                      echo '<td><a href="download.php?fileID=' . $currentFile['ID'] . '" class="btn btn-success" role="button">Download</a><a href="remove.php?fileID=' . $currentFile['ID'] . '" class="btn btn-danger" role="button">Remove</a></td>'; 
+                      echo '<td><a href="download.php?fileID=' . $currentFile['ID'] . '" class="btn btn-success" role="button">Download</a></td>'; 
+                      echo '<td><a href="map.php?latitude=' . $currentFile['Latitude'] . '&Longitude=' . $currentFile['Longitude'] . '" class="btn btn-info" role="button">View on Map</a></td>';
+                      echo '<td><a href="remove.php?fileID=' . $currentFile['ID'] . '" class="btn btn-danger" role="button">Remove</a></td>';
                       echo '</tr>';
                   }
                   
@@ -110,6 +118,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="js/lib/bootstrap.min.js"></script>
+    <script src="js/search.js"></script>
     <script src="holder.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="js/lib/ie10-viewport-bug-workaround.js"></script>
