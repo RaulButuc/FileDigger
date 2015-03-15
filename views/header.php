@@ -15,7 +15,7 @@
             <p style="float:right;">FileDigger</p>
           </a>
         </div>
-        <?php if (basename($_SERVER['PHP_SELF']) == 'index.php') { ?>
+        <?php if (basename($_SERVER['PHP_SELF']) == 'index.php' || basename($_SERVER['PHP_SELF']) == 'confirm.php') { ?>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#" data-toggle="modal" data-target="#registerModal"><span class="glyphicon glyphicon-user"></span> Register</a></li>
