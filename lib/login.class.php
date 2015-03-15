@@ -64,6 +64,12 @@
 					$this->errorRedirect('All fields must be completed', 'register');
 				}
 			}
+			// Confirm an account
+			elseif (isset($_GET['token'])) {
+				if ($this->db_connect($db)) {
+					$this->activateAccount($_GET['token']);
+				}
+			}
 		}
 
 		// Return whether a user is logged in
@@ -89,7 +95,7 @@
 		// Logs in a user and sets session variables
 		private function login($username, $password) {
 			// Prepare login query, selects the password of the user being logged in
-			if (!($stmt = $this->connection->prepare("SELECT ID, Password FROM Users WHERE Username = ? LIMIT 1"))) {
+			if (!($stmt = $this->connection->prepare("SELECT ID, Password, Active FROM Users WHERE Username = ? LIMIT 1"))) {
 				$this->errorRedirect('Failed to prepare query: ('.$this->connection->errno.') '.$this->connection->error, 'login');
 			} else {
 				// Bind the username as a parameter to the prepared query
@@ -102,25 +108,31 @@
 				// If the username exists
 				if ($stmt->num_rows > 0) {
 					// Fetch the value of the password for this user
-					$stmt->bind_result($userID, $mySQLHash);
+					$stmt->bind_result($userID, $mySQLHash, $active);
 					$stmt->fetch();
 
-					// Verify that the given hash matches the password got from mySQL
-					if (password_verify($password, $mySQLHash)) {
-						// Verified, log in the user
-						// IP and user agent checking to attempt to prevent session hijacking
+					// Check that the user is confirmed before proceeding
+					if ($active == '1') {
+						// Verify that the given hash matches the password got from mySQL
+						if (password_verify($password, $mySQLHash)) {
+							// Verified, log in the user
+							// IP and user agent checking to attempt to prevent session hijacking
 
-						// DO OTHER LOGIN STUFF HERE
-						$_SESSION['userIP'] = $_SERVER['REMOTE_ADDR'];
-						$_SESSION['userAgent'] = $_SERVER['HTTP_USER_AGENT'];
-						$_SESSION['loggedIn'] = true;
-						// Store username in session variable
-						$_SESSION['username'] = $username;
-						$_SESSION['userID'] = $userID;
-						// Set login flag within class to true
-						$this->loggedIn = true;
+							// DO OTHER LOGIN STUFF HERE
+							$_SESSION['userIP'] = $_SERVER['REMOTE_ADDR'];
+							$_SESSION['userAgent'] = $_SERVER['HTTP_USER_AGENT'];
+							$_SESSION['loggedIn'] = true;
+							// Store username in session variable
+							$_SESSION['username'] = $username;
+							$_SESSION['userID'] = $userID;
+							// Set login flag within class to true
+							$this->loggedIn = true;
+						} else {
+							$this->errorRedirect('Incorrect Username or Password', 'login');
+						}
 					} else {
-						$this->errorRedirect('Incorrect Username or Password', 'login');
+						// Not confirmed
+						header('Location: confirm.php');
 					}
 				} else {
 					// Incorrect username error
@@ -137,19 +149,39 @@
 
 			// MySQL Insert
 			// Prepare registration query, prevents MySQL injection and is best practice
-			if (!($stmt = $this->connection->prepare("INSERT INTO Users(Username, Password, Email) VALUES (?, ?, ?)"))) {
+			if (!($stmt = $this->connection->prepare("INSERT INTO Users(Username, Password, Email, Email_Confirm_Token) VALUES (?, ?, ?, ?)"))) {
 				$this->errorRedirect('Failed to prepare query: ('.$this->connection->errno.') '.$this->connection->error, 'register');
 			} else {
+				// Get a unique token for email validation
+				$token = sha1(uniqid($username, true));
 				// Bind parameters to prepared query (three strings)
-				$stmt->bind_param('sss', $username, $hashedPassword, $email);
+				$stmt->bind_param('ssss', $username, $hashedPassword, $email, $token);
 				// Execute the query to add the row
 				if ($stmt->execute()) {
-					// Registration was successful, add another redirect here for success
-	
-					// Possibly login right now after registering? Depends what we want as behaviour
+					// Registration was successful but send a confirmation email
+					$headers = "From:FileDigger<mail@filedigger.me>";
+					$emailContent = "Thank you for registering with FileDigger. To activate your account, click on the following link: http://filedigger.me/confirm.php?token=".$token."\n\nIf you did not sign up with this email address, please ignore this email";
+					mail($email, "FileDigger.me Registration - Activate your account", $emailContent, $headers);
+					// Use the login function. This will not work if the account is not yet confirmed, but acts as a redirect to /confirm.php
 					$this->login($username, $password);
 				} else {
 					$this->errorRedirect('Failed to register: ('.$this->connection->errno.') '.$this->connection->error, 'register');
+				}
+			}
+		}
+
+		// Validate the email of an account and activate it
+		private function activateAccount($token) {
+			if (!($stmt = $this->connection->prepare("UPDATE Users SET Active=1 WHERE Email_Confirm_Token = ?"))) {
+				$this->errorRedirect('Failed to prepare query: ('.$this->connection->errno.') '.$this->connection->error, 'confirm');
+			} else {
+				// Bind parameters to prepared query (three strings)
+				$stmt->bind_param('s', $token);
+				// Execute the query to update the row
+				if ($stmt->execute()) {
+					header('Location: confirm.php?success='.urlencode("Your account has been successfully activated! You can now login using the header above or from the main page"));
+				} else {
+					$this->errorRedirect('Failed to confirm account: ('.$this->connection->errno.') '.$this->connection->error, 'confirm');
 				}
 			}
 		}
@@ -173,7 +205,11 @@
 
 		// Error with login/register ends in a redirect
 		private function errorRedirect($message, $action) {
-			header('Location: login.php?err='.urlencode($message).'&a='.$action);
+			if ($action == 'confirm') {
+				header('Location: confirm.php?err='.urlencode($message));
+			} else {
+				header('Location: login.php?err='.urlencode($message).'&a='.$action);
+			}
 		}
 	}
 

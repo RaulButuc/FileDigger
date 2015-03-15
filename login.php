@@ -1,7 +1,6 @@
 <?php
 
-  // Include config and library classes
-  include_once('config.inc.php');
+  // Include library classes
   include_once('lib/database.class.php');
   include_once('lib/login.class.php');
 
