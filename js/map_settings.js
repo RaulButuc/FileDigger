@@ -5,7 +5,7 @@ function handleGeolocationUnavailable(errorFlag, map) {
     var content = 'Error: Your browser doesn\'t supoort geolocation.';
   }
 
-  var noLocation = new google.maps.LatLng(20, -10);
+  var noLocation = new google.maps.LatLng(20, -10);zz
 
   var noLocationMapOptions = {
     center: noLocation,
@@ -86,11 +86,14 @@ function placeMarkerForUpload(map, location) {
 
 }
 
+
 function placeMarkerForDownload(fileID, lat, lng, name, radius, map) {
   var markerLocation = new google.maps.LatLng(lat, lng);
+
   var existingMarker = new google.maps.Marker({
     map: map,
-    position: markerLocation
+    position: markerLocation,
+    icon: 'http://filedigger.me/img/spade-marker.png'
   });
 
   var downloadBoxHTMLPart1 = 
