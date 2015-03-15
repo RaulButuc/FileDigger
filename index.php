@@ -168,7 +168,7 @@
           <p class="lead">Choose a location and upload your file to the map. You can also choose to restrict downloading to a radius, share only with friends or set a limited period during a file will be downloadable.</p>
         </div>
         <div class="col-md-5">
-          <img class="featurette-image img-responsive" src="img/picture1.png" alt="Generic placeholder image">
+          <img class="featurette-image img-responsive" src="img/picture1.png" alt="File based.">
         </div>
       </div>
 
@@ -176,7 +176,7 @@
 
       <div class="row featurette">
         <div class="col-md-5">
-          <img class="featurette-image img-responsive" data-src="holder.js/500x300/auto" alt="Generic placeholder image">
+          <img class="featurette-image img-responsive" src="img/Picture2.png" alt="Location on the map.">
         </div>
         <div class="col-md-7">
           <h2 class="featurette-heading">Step 2. <span class="text-muted">Share the location.</span></h2>
@@ -192,7 +192,7 @@
           <p class="lead">Download from the location on a mobile device if radius restriction was set, otherwise you can download from anywhere. It's that simple.</p>
         </div>
         <div class="col-md-5">
-          <img class="featurette-image img-responsive" data-src="holder.js/500x300/auto" alt="Generic placeholder image">
+          <img class="featurette-image img-responsive" src="img/picture3.png" alt="Download.">
         </div>
       </div>
 
