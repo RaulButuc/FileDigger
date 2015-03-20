@@ -27,7 +27,7 @@
     <meta name="description" content="FileDigger allows you to upload files and share data and associate it with a physical location">
     <meta name="author" content="Tutorial Group Y11">
 
-    <title> Account - FileDigger</title>
+    <title> Your Files - FileDigger</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -89,12 +89,12 @@
                       $currentRadius = ($currentFile['Radius'] == 0 ? 'None' : $currentFile['Radius']);
                       echo '<tr>';
                       echo '<td>' . $currentFile['ID'] . '</td>';
-                      echo '<td>' . $currentFile['Name'] . '</td>';
+                      echo '<td class="name">' . $currentFile['Name'] . '</td>';
                       echo '<td>' . $currentFile['Latitude'] . '</td>';
                       echo '<td>' . $currentFile['Longitude'] . '</td>';
                       echo '<td>' . $currentRadius  . '</td>';
                       echo '<td><a href="download.php?fileID=' . $currentFile['ID'] . '" class="btn btn-success" role="button">Download</a></td>'; 
-                      echo '<td><a href="map.php?latitude=' . $currentFile['Latitude'] . '&Longitude=' . $currentFile['Longitude'] . '" class="btn btn-info" role="button">View on Map</a></td>';
+                      echo '<td><a href="map.php?lat=' . $currentFile['Latitude'] . '&long=' . $currentFile['Longitude'] . '" class="btn btn-info" role="button">View on Map</a></td>';
                       echo '<td><a href="remove.php?fileID=' . $currentFile['ID'] . '" class="btn btn-danger" role="button">Remove</a></td>';
                       echo '</tr>';
                   }
