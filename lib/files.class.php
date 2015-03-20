@@ -19,11 +19,17 @@
 
 		// Upload a file
 		// Gets file and file info from submitted file, rest of the arguments are passed to it
-		public function uploadFile($userid, $lat, $long) {
+		public function uploadFile($userid, $lat, $long, $radius) {
+		
+		  // Check that the radius is within correct values
+		  if (!is_numeric($radius) || $radius < 0 || $radius > 500) {
+		    $this->lastError = 'Radius was not within required values';
+		    return false;
+		  }
 
 			// Check that there were no errors
 			if ($_FILES['file']['error'] > 0) {
-				$this->lastError = 'An error ocurred when trying to upload the file';
+				$this->lastError = 'An upload error ocurred when trying to upload the file';
 				return false;
 			}
 
@@ -37,9 +43,10 @@
 				'mp3' => 'audio/mpeg3',
 				'mp3' => 'audio/x-mpeg-3',
 				'jpg' => 'image/jpeg',
-        		'png' => 'image/png',
-        		'gif' => 'image/gif',
-        		'bmp' => 'image/bmp'
+                'png' => 'image/png',
+                'gif' => 'image/gif',
+                'bmp' => 'image/bmp'
+                //'pdf' => 'application/pdf'
 			);
 			if(!$extension = array_search($uploadedFileInfo, $allowedTypes)) {
 				$this->lastError = 'You cannot upload this filetype to the map';
@@ -61,12 +68,12 @@
 			}
 
 			// Add to the database afterwards
-		  if (!($stmt = $this->connection->prepare("INSERT INTO Files(User_ID, Latitude, Longitude, Name, Location) VALUES (?, ?, ?, ?, ?)"))) {
+		  if (!($stmt = $this->connection->prepare("INSERT INTO Files(User_ID, Latitude, Longitude, Name, Location, Radius) VALUES (?, ?, ?, ?, ?, ?)"))) {
 			  $this->lastError = 'Failed to prepare query: ('.$this->connection->errno.') '.$this->connection->error;
 			  return false;
 		  } else {
 			  // Bind parameters to prepared query
-			  $stmt->bind_param('sddss', $userid, $lat, $long, $_FILES['file']['name'], $location);
+			  $stmt->bind_param('sddssi', $userid, $lat, $long, $_FILES['file']['name'], $location, $radius);
 			  // Execute the query to add the row
 			  if ($stmt->execute()) {
 				  // Successful upload, return the completed file data
