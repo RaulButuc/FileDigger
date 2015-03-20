@@ -95,7 +95,7 @@
 		// Logs in a user and sets session variables
 		private function login($username, $password) {
 			// Prepare login query, selects the password of the user being logged in
-			if (!($stmt = $this->connection->prepare("SELECT ID, Password, Active FROM Users WHERE Username = ? LIMIT 1"))) {
+			if (!($stmt = $this->connection->prepare("SELECT ID, Password, Active, Email FROM Users WHERE Username = ? LIMIT 1"))) {
 				$this->errorRedirect('Failed to prepare query: ('.$this->connection->errno.') '.$this->connection->error, 'login');
 			} else {
 				// Bind the username as a parameter to the prepared query
@@ -108,7 +108,7 @@
 				// If the username exists
 				if ($stmt->num_rows > 0) {
 					// Fetch the value of the password for this user
-					$stmt->bind_result($userID, $mySQLHash, $active);
+					$stmt->bind_result($userID, $mySQLHash, $active, $email);
 					$stmt->fetch();
 
 					// Check that the user is confirmed before proceeding
@@ -125,6 +125,7 @@
 							// Store username in session variable
 							$_SESSION['username'] = $username;
 							$_SESSION['userID'] = $userID;
+							$_SESSION['email'] = $email;
 							// Set login flag within class to true
 							$this->loggedIn = true;
 						} else {
