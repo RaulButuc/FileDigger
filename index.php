@@ -67,7 +67,7 @@
                   <br>
                   <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                    <input class="username form-control" type="text"  name="username" value="" placeholder="username or email">
+                    <input class="username form-control" type="text"  name="username" value="" placeholder="username">
                   </div>
                   <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>                                        
@@ -141,19 +141,16 @@
           <img class="img-circle" src="img/circle1.png" alt="Location based downloads" style="width: 140px; height: 140px;">
           <h2>Share Files</h2>
           <p>Upload files and associate them with a location to allow them to be visible on a map to friends, or publicly to everyone.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4">
           <img class="img-circle" src="img/circle2.png" alt="Radius restricted downloads" style="width: 140px; height: 140px;">
           <h2>Restrict Downloading</h2>
           <p>Set files to only be viewable or downloadable in a radius of the given location. Share guides or maps only with event attendees or even create treasure hunts for friends!</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4">
           <img class="img-circle" src="img/circle3.png" alt="Time limited downloads" style="width: 140px; height: 140px;">
           <h2>Set Expiry</h2>
           <p>Make sure files can only be downloadable within a certain time frame. Perfect for event related files and information you only want to share for a limited period.</p>
-          <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
       </div><!-- /.row -->
 
@@ -176,7 +173,7 @@
 
       <div class="row featurette">
         <div class="col-md-5">
-          <img class="featurette-image img-responsive" src="img/Picture2.png" alt="Location on the map.">
+          <img class="featurette-image img-responsive" src="img/picture2.png" alt="Location on the map.">
         </div>
         <div class="col-md-7">
           <h2 class="featurette-heading">Step 2. <span class="text-muted">Share the location.</span></h2>
