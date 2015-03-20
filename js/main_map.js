@@ -2,7 +2,7 @@
 var fileDiggerMapOptions = {
   center: { lat: 53.466860, lng: -2.233873},
   zoom: 15,
-  minZoom: 7,
+  minZoom: 3,
   disableDefaultUI: true,
   disableDoubleClickZoom: false,
   draggable: true,
@@ -43,22 +43,97 @@ var uploadBoxHTML;
 
 // Initialize method
 function initialize() {
+
+  // Read get variables within javascript - http://stackoverflow.com/questions/19491336/get-url-parameter-jquery
+  function getUrlParameter(sParam)
+  {
+      var sPageURL = window.location.search.substring(1);
+      var sURLVariables = sPageURL.split('&');
+      for (var i = 0; i < sURLVariables.length; i++) 
+      {
+          var sParameterName = sURLVariables[i].split('=');
+          if (sParameterName[0] == sParam) 
+          {
+              return sParameterName[1];
+          }
+      }
+  }      
+
+  var markers = [];
+
   if (navGeolocation) {
     navGeolocation.getCurrentPosition(function (position) {
       var userLat = position.coords.latitude;
       var userLong = position.coords.longitude;
       var userLocation = new google.maps.LatLng(userLat, userLong);
       
-      fileDiggerMap.setCenter(userLocation);
-
-      google.maps.event.addListener(fileDiggerMap, 'click', function(event) {
-        placeMarkerForUpload(fileDiggerMap, event.latLng);
-      });
+      if (getUrlParameter('lat') && getUrlParameter('long')) {
+        console.log("Used file latlong as center");
+        fileDiggerMap.setCenter(new google.maps.LatLng(getUrlParameter('lat'), getUrlParameter('long')));
+        fileDiggerMap.setZoom(19);
+      } else {
+        console.log("Used user location as center");
+        fileDiggerMap.setCenter(userLocation);
+      }
     });
   }
   else {
     handleGeolocationUnavailable(false, fileDiggerMap);
   }
+  
+  // onClick place marker for upload
+  google.maps.event.addListener(fileDiggerMap, 'click', function(event) {
+    placeMarkerForUpload(fileDiggerMap, event.latLng);
+  });
+  
+  // Create the search box and link it to the UI element.
+  var input = /** @type {HTMLInputElement} */(
+      document.getElementById('pac-input'));
+  fileDiggerMap.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+  var searchBox = new google.maps.places.SearchBox(
+    /** @type {HTMLInputElement} */(input));
+
+  // Listen for the event fired when the user selects an item from the
+  // pick list. Retrieve the matching places for that item.
+  google.maps.event.addListener(searchBox, 'places_changed', function() {
+    var places = searchBox.getPlaces();
+
+    if (places.length == 0) {
+      return;
+    }
+    for (var i = 0, marker; marker = markers[i]; i++) {
+      marker.setMap(null);
+    }
+
+    // For each place, get the icon, place name, and location.
+    markers = [];
+    var bounds = new google.maps.LatLngBounds();
+    for (var i = 0, place; place = places[i]; i++) {
+      var image = {
+        url: place.icon,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 34),
+        scaledSize: new google.maps.Size(25, 25)
+      };
+
+      // Create a marker for each place.
+      var marker = new google.maps.Marker({
+        map: fileDiggerMap,
+        icon: image,
+        title: place.name,
+        position: place.geometry.location
+      });
+
+      markers.push(marker);
+
+      bounds.extend(place.geometry.location);
+    }
+
+    fileDiggerMap.fitBounds(bounds);
+  });
+ 
 }
 
 $(document).ready(function() {
@@ -115,12 +190,6 @@ $(document).ready(function() {
       // Prevent default posting of form
       event.preventDefault();
   });
-  
-  /*$("#fullScreenMap").click(function() {
-    var htmlCode = $.parseHTML(uploadBoxHTML);
-    $("#htmlParsingPlaceholder").append($(htmlCode));
-    alert($("#htmlParsingPlaceholder").find("#radius-slider").text());
-  });*/
 
   $.getJSON('mapData.php', function(data) {
     $.each(data, function(key, value) {
