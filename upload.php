@@ -21,13 +21,14 @@
     
     // Along with POST details from form:
     // POSITION VARS
-    if (isset($_POST['latitude']) && isset($_POST['longitude'])) {
+    if (isset($_POST['latitude']) && isset($_POST['longitude']) && isset($_POST['radius'])) {
       $userid = $_SESSION['userID'];
       $lat = $_POST['latitude'];
       $lng = $_POST['longitude'];
+      $radius = $_POST['radius'];
     
       // To add thea file to the DB and move to storage
-      if ($result = $files->uploadFile($userid, $lat, $lng) == false) {
+      if ($result = $files->uploadFile($userid, $lat, $lng, $radius) == false) {
         header('Location: account.php?err='.urlencode($files->getError()));
       } else {
         // Redirect to the files list if this succeeded
