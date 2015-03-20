@@ -22,11 +22,11 @@
             <li><a href="#" data-toggle="modal" data-target="#loginModal"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
           </ul>
         </div>
-        <?php } else if (basename($_SERVER['PHP_SELF']) == 'map.php' || basename($_SERVER['PHP_SELF']) == 'account.php') { ?>
+        <?php } else if (basename($_SERVER['PHP_SELF']) == 'map.php' || basename($_SERVER['PHP_SELF']) == 'account.php'|| basename($_SERVER['PHP_SELF']) == 'user.php') { ?>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Hello, <?php echo $_SESSION['username']; ?></a></li>
-            <li><a href="account.php">Account</a></li>
+            <li><a href="user.php"><?php echo $_SESSION['username']; ?></a></li>
+            <li><a href="account.php">My Files</a></li>
             <li><a href="?logout"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
           </ul>
         </div>
